@@ -1,1 +1,395 @@
-<p><iframe src="https://media.geeksforgeeks.org/wp-content/cdn-uploads/20230601105259/M-to-Cr.html" width="100%" style="height: 340px !important"></iframe>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <title>Tic Tac Toe</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik+Doodle+Shadow:wght@400&display=swap">
+  <style>
+    body {
+      font-family: 'Permanent Marker', cursive;
+      display: flex;
+      width="100%";
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #000;
+      color: white;
+    }
+
+    #game {
+      width: auto;
+      text-align: center;
+      width="100%";
+    }
+
+    #board {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+      background: none;
+      padding: 15px;
+      border-radius: 15px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width="100%";
+    }
+
+    .cell {
+      width: 150px;
+      height: 150px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border: 1px solid #555;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 100px;
+      cursor: pointer;
+      color: white;
+      border-radius: 8px;
+      transition: background-color 0.3s ease;
+      width="100%";
+    }
+
+    #scoreCard {
+      display: flex;
+      justify-content: space-between;
+      font-size: 20px;
+      width="100%";
+      margin-bottom: 20px;
+      font-family: 'Rubik Doodle Shadow'
+        color: #ffcc00;
+      /* Change to your desired color */
+    }
+
+    .cell:hover {
+      background-color: rgba(255, 255, 255, 0.3);
+    }
+
+    @media only screen and (max-width: 600px) {
+      #board {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 5px;
+      }
+
+      .cell {
+        width: 100px;
+        height: 100px;
+        font-size: 60px;
+        width="100%";
+      }
+
+      body {
+        align-items: start;
+      }
+
+      #game {
+        text-align: left;
+      }
+
+      #friendModeButton,
+      #restartButton,
+      #resetScoreButton {
+        font-size: 14px;
+        padding: 8px 12px;
+        margin-top: 4px;
+        font-family: 'Permanent Marker', cursive;
+        width="100%";
+      }
+    }
+
+    #status {
+      margin-bottom: 20px;
+      font-size: 37px;
+      width="100%";
+    }
+
+    .winning-cell {
+      animation: scale 0.5s infinite alternate;
+    }
+
+    .tied-cell {
+      animation: shake 0.5s ease-in-out;
+    }
+
+    @keyframes scale {
+      0% {
+        transform: scale(1);
+      }
+
+      100% {
+        transform: scale(1.2);
+      }
+    }
+
+    @keyframes shake {
+
+      0%,
+      100% {
+        transform: translateX(0);
+      }
+
+      25%,
+      75% {
+        transform: translateX(-5px);
+      }
+
+      50% {
+        transform: translateX(5px);
+      }
+    }
+
+    .tied-cell {
+      animation: shake 0.5s ease-in-out;
+    }
+
+    #scoreCard {
+      display: flex;
+      justify-content: space-between;
+      font-size: 20px;
+      margin-bottom: 20px;
+      width="100%";
+    }
+
+    .score-separator {
+      margin: 0 8px;
+      /* Adjust the margin as needed */
+      color: #fff;
+      /* Color of the separator */
+    }
+
+    #resetScoreButton {
+      background: linear-gradient(to bottom, purple, purple, purple), rgba(0, 128, 0, 0.8);
+      border: none;
+      padding: 8px 15px;
+      color: white;
+      text-align: center;
+      text-decoration: none;
+      font-size: 15px;
+      width="100%";
+      cursor: pointer;
+      border-radius: 20px;
+      margin-right: 15px;
+      margin-top: -5px;
+      transition: background-color 0.3s ease;
+      font-family: 'Permanent Marker', cursive;
+    }
+
+    #resetScoreButton:hover {
+      background: linear-gradient(to bottom, grey, grey), rgba(128, 1, 0, 0.8);
+    }
+
+    #restartButton,
+    #friendModeButton {
+      background: linear-gradient(to bottom, purple, purple, purple), rgba(0, 128, 0, 0.8);
+      border: none;
+      color: white;
+      padding: 15px 15px;
+      text-align: center;
+      text-decoration: none;
+      width="100%";
+      font-size: 19px;
+      margin: 4px 4px;
+      cursor: pointer;
+      border-radius: 8px;
+      margin-right: 0px;
+      margin-top: 8px;
+      transition: background-color 0.3s ease;
+      font-family: 'Permanent Marker', cursive;
+    }
+
+    #restartButton:hover,
+    #friendModeButton:hover {
+      background: linear-gradient(to bottom, grey, grey), rgba(5, 128, 0, 0.8);
+    }
+  </style>
+</head>
+
+<body>
+  <div id="game">
+    <div id="scoreCard">
+      <center>
+        <div id="playerXScore">Player X: 0</div>
+      </center>
+      <div class="score-separator">|</div>
+      <div id="playerOScore">Player O: 0</div>
+      <div class="score-separator">|</div>
+      <div id="drawScore">Draws: 0</div>
+      <button id="resetScoreButton">Reset Scores</button>
+    </div>
+
+    <div id="status">Friend Mode | X's turn</div>
+    <div id="board">
+      <div class="cell" data-cell-index="0"></div>
+      <div class="cell" data-cell-index="1"></div>
+      <div class="cell" data-cell-index="2"></div>
+      <div class="cell" data-cell-index="3"></div>
+      <div class="cell" data-cell-index="4"></div>
+      <div class="cell" data-cell-index="5"></div>
+      <div class="cell" data-cell-index="6"></div>
+      <div class="cell" data-cell-index="7"></div>
+      <div class="cell" data-cell-index="8"></div>
+    </div>
+    <button id="friendModeButton">Friend Mode</button>
+    <button id="restartButton">Restart Game</button>
+  </div>
+
+  <!-- <audio id="winSound" src="https://jmp.sh/s/hdoP89VqgbIi6pbTMo8A"></audio> -->
+  <audio id="winSound" src="audio-won.mp3"></audio>
+  <script>
+    const cells = document.querySelectorAll('.cell');
+    const statusText = document.getElementById('status');
+    const restartButton = document.getElementById('restartButton');
+    const friendModeButton = document.getElementById('friendModeButton');
+    const resetScoreButton = document.getElementById('resetScoreButton');
+    const winSound = document.getElementById('winSound');
+    let currentPlayer = 'X';
+    let gameActive = true;
+    let friendMode = false;
+    let gameState = ['', '', '', '', '', '', '', '', ''];
+    let playerXScore = 0;
+    let playerOScore = 0;
+    let drawScore = 0;
+    const winningConditions = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [2, 4, 6]
+    ];
+
+    function handleCellPlayed(clickedCell, clickedCellIndex) {
+      gameState[clickedCellIndex] = currentPlayer;
+      clickedCell.innerText = currentPlayer;
+    }
+
+    function handlePlayerChange() {
+      currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+      statusText.innerText = friendMode ? `Friend Mode | ${currentPlayer}'s turn` : `${currentPlayer}'s turn`;
+      if (!friendMode && currentPlayer === 'O' && gameActive) {
+        setTimeout(() => {
+          makeBotMove();
+        }, 500);
+      }
+    }
+
+    function makeBotMove() {
+      const emptyCells = gameState.reduce((acc, cell, index) => {
+        if (cell === '') {
+          acc.push(index);
+        }
+        return acc;
+      }, []);
+      if (emptyCells.length > 0) {
+        const randomIndex = Math.floor(Math.random() * emptyCells.length);
+        const botMove = emptyCells[randomIndex];
+        const botCell = cells[botMove];
+        handleCellPlayed(botCell, botMove);
+        handleResultValidation();
+      }
+    }
+
+    function handleResultValidation() {
+      let roundWon = false;
+      let winningCells = [];
+      for (let i = 0; i <= 7; i++) {
+        const winCondition = winningConditions[i];
+        let a = gameState[winCondition[0]];
+        let b = gameState[winCondition[1]];
+        let c = gameState[winCondition[2]];
+        if (a === '' || b === '' || c === '') {
+          continue;
+        }
+        if (a === b && b === c) {
+          roundWon = true;
+          winningCells = winCondition;
+          break;
+        }
+      }
+      if (roundWon) {
+        statusText.innerText = `${currentPlayer} wins!`;
+        winningCells.forEach(index => {
+          cells[index].classList.add('winning-cell');
+        });
+        gameActive = false;
+        winSound.play();
+        if (currentPlayer === 'X') {
+          playerXScore++;
+        } else {
+          playerOScore++;
+        }
+        updateScoreCard();
+        return true;
+      }
+      let roundDraw = !gameState.includes('');
+      if (roundDraw) {
+        statusText.innerText = `Game drawn!`;
+        cells.forEach(cell => {
+          cell.classList.add('tied-cell');
+        });
+        gameActive = false;
+        drawScore++;
+        updateScoreCard();
+        return false;
+      }
+      handlePlayerChange();
+      return false;
+    }
+
+    function handleCellClick(clickedCellEvent) {
+      const clickedCell = clickedCellEvent.target;
+      const clickedCellIndex = parseInt(clickedCell.getAttribute('data-cell-index'));
+      if (gameState[clickedCellIndex] !== '' || !gameActive) {
+        return;
+      }
+      handleCellPlayed(clickedCell, clickedCellIndex);
+      handleResultValidation();
+    }
+
+    function handleRestartGame() {
+      gameActive = true;
+      currentPlayer = 'X';
+      gameState = ['', '', '', '', '', '', '', '', ''];
+      statusText.innerText = friendMode ? `Friend Mode | ${currentPlayer}'s turn` : `${currentPlayer}'s turn`;
+      cells.forEach(cell => {
+        cell.classList.remove('winning-cell', 'tied-cell');
+      });
+      cells.forEach(cell => cell.innerText = '');
+      if (!friendMode && currentPlayer === 'O') {
+        makeBotMove();
+      }
+    }
+
+    function handleFriendModeToggle() {
+      friendMode = !friendMode;
+      restartButton.click();
+      friendModeButton.innerText = friendMode ? 'Bot Mode' : 'Friend Mode';
+    }
+
+    function handleResetScore() {
+      playerXScore = 0;
+      playerOScore = 0;
+      drawScore = 0;
+      updateScoreCard();
+    }
+
+    function updateScoreCard() {
+      document.getElementById('playerXScore').innerText = `Player X: ${playerXScore}`;
+      document.getElementById('playerOScore').innerText = `Player O: ${playerOScore}`;
+      document.getElementById('drawScore').innerText = `Draws: ${drawScore}`;
+    }
+    cells.forEach(cell => cell.addEventListener('click', handleCellClick));
+    restartButton.addEventListener('click', handleRestartGame);
+    friendModeButton.addEventListener('click', handleFriendModeToggle);
+    resetScoreButton.addEventListener('click', handleResetScore);
+  </script>
+</body>
+
+</html>
